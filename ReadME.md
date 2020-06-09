@@ -188,3 +188,267 @@ select empno, ename, job from emp where sal between 1000 and 2000;
 
 직책이 clerk, manager, salesman 사원에 대한 사원번호, 사원이름, 급여, 직책을 출력
 select empno, ename, sal, job from emp where job in ('clerk','manager','salesman');
+
+#### 2020.06.09
+데이터베이스
+
+시스템 구조
+데이터베이스 클라이언트
+    1. 자체 제공 클라이언트
+        1. prompt
+            접근환경설정: mysql
+                - 사용자환경
+                - 관리자환경
+        2. Heidi : GUI 느낌
+
+    2. Third Party - 상용화시켜서 파는 경우
+        www.quest.com > toad
+
+    * java - 연결관리자 제작 가능
+<->
+데이터베이스 서버(서비스 등록)
+    관리 시스템
+    데이터베이스(파일)
+*
+foreground process - 전면(일반적인 프로그램)
+background process - 후면(백신):service(window같이 시작/종료)
+
+* 데이터베이스의 분류
+왜 이 DB를 쓰는가? = 중형에 쓸만하니까 MariaDB!
+데이터베이스 관리자가 되고 싶다면 Oracle / DB2를 배워야. 자격증(ocp - ocm) sqld
+
+* mariaDB
+
+* 처음보는 데이터에 접근할 때 이 순서로
+- 자바에서 UML이 모델링의 틀이 되듯, 
+    데이터모델링의 틀이 되는 ERD(Entity Relationship Diagram)이 있다.
+        논리적 모델링 - 한글 중심으로 씀
+        물리적 모델링 - 데이터베이스 중심으로 씀
+            1. 기획
+            2. 외부에서 시스템을 확인할 때 사용
+            
+1. show databases;
+2. use databaseName;
+3. show tables;
+4. desc table; describe
+절대 하지 말 것 : select * from 테이블명; (X) 잘못하면 프로그램 다운됨. 
+5. select count(*) from 테이블명;으로 개수를 확인한 뒤애
+select * from limit 0,2; 로 맛만 본다.
+--
+이 모든 것이 DML 조작을 위한 것.
+어떤 db인지 정하지 않고 그때그때 사용하려면 from 뒤 테이블명 적기
+
+아예 처음에 시작할때 사용할 샘플부터 시작 가능
+select * from table.column;
+
+dml
+select 컬렴명 /*        // select 절
+    별명, distinct
+from 테이블명           // from 절
+where 조건              // where 절
+    비교연산자 / 논리연산자
+    between
+
+Null의 비교는 그냥 = 써서는 안되고 is null; 해야 함
+
+급여가 1000에서 2000 사이가 아닌 사원
+select empno, ename, job, sal from emp where sal not between 1000 and 2000;
+
+동이름이 신사로 시작하는..
+동이름이 신사를 포함하는..
+
+=> 비교연산자를 사용하지 못함
+
+like + 연산자 : 유사비교
+        _ : 문자 한 글자 대치
+            ex)한_ = 무조건 두글자. 한국, 한조
+        % : 0개 이상 무한대를 대치
+            한% / %한 / %한%
+
+=> 논리연산자를 사용해야 함
+
+s로 시작하는 사람
+select empno, ename from emp where ename like 's%';
+k로 끝나는 사람
+select empno, ename from emp where ename like '%k';
+두번째 문자가 M인 사원
+select empno, ename from emp where ename like '_m%';
+이름이 4글자인 사원
+select empno, ename from emp where ename like '____';
+
+시간에 대해서도 이 개념의 활용 가능
+
+2월에 입사한 사람에 대한 정보
+근데 아래와 같이 하면 4월 02일도 찍힌다.
+select empno, ename, hiredate from emp where hiredate like '%02%';
+특수기호를 하나 넣어 줘야 함
+select empno, ename, hiredate from emp where hiredate like '%02-%';
+
+
+정렬
+    오름차순 / 내림차순
+    ORDER BY acs / desc 디폴트는 오름차순인 acs
+(!)정렬시켰다 해도 데이터 자체의 변화는 없음
+
+Q : 입사일자로 정렬(역순)된 사원정보 출력 사원번호, 이름, 입사일자
+select empno, ename, hiredate from emp order by hiredate desc;
+
+정렬도 여러번 가능하다. 1차정렬 이후, 겹치는 것에 한해 2차정렬이 이루어진다.
+select empno, ename,job, deptno from emp order by job, deptno;
+
+select ename e, job j from emp order by j;
+
+Q: 월급을 연봉으로 바꾸어서 정리할 때 이런 식으로 쓴다.
+select empno, ename, sal, sal*12 yearsal from emp order by yearsal;
+
+컬럼이 여러개일 때는 순서값을 줘도 됨.
+select empno, ename, sal, sal*12 yearsal from emp order by 4 desc;
+
+일정 개수만 가져올 때
+limit : index를 사용하면 된다. 시작점 디폴트는 0
+Q: 시작부터 상위 4개만 가져올 때
+select empno, ename, sal, sal*12 yearsal from emp order by 4 desc limit 0,4;
+
+함수(모듈화)
+    단일행 함수 - 1행 : 1행
+
+    복수행 함수 - 多행 : 1행 (결과가 묶이는 것)
+레퍼런스 보면 됨. https://dev.mysql.com/doc/refman/8.0/en/func-op-summary-ref.html
+
+abs, round, ceil... 왠만한 수학 관련 함수는 다 있음
+truncate(num, 소수점) 소수점 자르는 함수
+pow 제곱함수
+mod 나머지
+
+* 문자열 관련 함수
+ascii() 아스키 값 리턴
+length() 글자 길이 '테 스 트' = 8
+char_length 글자 길이 '테 스 트' = 5
+
+select ename from emp where length(ename) = 4;
+
+concat : 문자열 이어붙이기
+select concat('asp','php');
+
+select concat(ename,job) from emp where deptno=10;
+
+select concat(ename, '의 직책은 ', job, '입니다.') as result from emp where deptno=10;
+
+Q : 사원이름의 연봉은 xxxx입니다.
+select concat(ename, '의 연봉은 ', truncate(sal*12,0),'입니다.') as result from emp;
+
+instr :문장 내 원하는 단어의 시작위치 리턴
+select instr('mysql database study','study'); : 16
+일반적인 경우와 다르게 시작위치가 0이 아니라 1부터 시작함.
+
+select ename, instr(ename,'mi')
+Java의 indexOf와 비슷
+
+right(~-1), left(1~), mid(start,개수) : 슬라이싱
+
+select substring('mysql database study',start,end); mid와 같음
+
+Q : S로 시작하는 사람들에 대한 정보
+select empno, ename, job, sal from emp where left(ename,1) = 's';
+
+select empno, ename, job, sal from emp where substring(ename,1,2) = 's';
+
+select empno, ename, job, sal from emp where mid(ename,0,1) = 's';
+
+replace : 대체 함수
+select replace('mysql database study','study','스터디');
+
+lower, upper, reverse
+
+ltrim, rtrim 공백 제거
+
+select lpad('hi',4,'*'); 4개의 글자에서 hi 왼쪽을 *로 채워라
+
+select sysdate();
+select curdate();
+select curtime();
+
+select now(), now()+1;
+
+**날짜 연산**
+select now(), date_add(now(), interval 2 day);
+select year(now());
+select year('2019-11-02');
+select dayname(now());
+select to_days(now());  유닉스 타임부터 지금까지를 날짜로 환산하면?
+select to_days(now())-to_days('2020-02-01'); : 현재부터 2020년 2월 1일까지의 일 차
+
+select now(), date_format(now(), '%Y-%m-%d'); : 날짜 출력 포매팅
+
+Q : 30번 부서의 입사일자를 년도:월:일로 표시
+select ename 이름, date_format(hiredate,'%Y:%m:%d') 취직일 from emp where deptno=30;
+
+select greates(100,101,102);
+select greatest(sal, 2000) from emp; : 2천 이하인 것은 2000으로 만들고 그 위의 값은 걍 자기값을 표시
+
+**조건문**
+select if(1=2, '참','거짓');
+select ename,sal, if(sal<2000,'박봉','개꿀') from emp where deptno=30;
+
+ifnull(x,y) x가 null이면 y값이 찍히고 아니면 x가 찍힘
+예외처리에 사용함
+select ename,sal,comm, sal*12+ifnull(comm,0) from emp where deptno=30;
+
+select case 4 when 1 then 'one' when 2 then 'two' when 3 then 'sam' when 4 then 'for' else 'more' end;
+
+select case when 1>0 then 'true' else 'false' end;
+
+* 급여 상승분 계산
+직책이 analyist면 급여 10% 인상, clerk이면 20%, manager면 30% 인상 그 외에는 급여인상 음슴
+select empno, ename, job, sal, case job when 'analyst' then sal*1.1 when 'clerk' then sal*1.2 when 'manager' then sal*1.3 else sal end from emp;
+
+**다른 폴더에서 sql 스크립트를 불러와 사용하기**
+source {path}
+source c:/coding/kicmariadb/ex01.sql
+
+행의 개수
+select count(sal) from emp;
+Null이 있더라도 개수를 정상적으로 뽑아오려면
+1. * 사용
+select count(comm) from emp; = 4
+select count(*) from emp; = 14
+2. ifnull 사용
+select count(ifnull(comm,0)) from emp;
+
+avg도 null을 내부적으로 제거한다.
+select avg(comm) from emp;
+
+select avg(comm), sum(comm), count(*) from emp;
+
+select avg(comm), sum(comm)/count(*) from emp;
+select avg(ifnull(comm,0)), sum(comm)/count(*) from emp;
+
+select max(sal), min(sal) from emp;
+select ename, max(sal) from emp; 첫번째 데이터만 가져옴
+select ename, sal from emp where sal>=5000;
+
+**부분합을 위한 그룹화**
+select {컬럼}
+        group by에 쓰여진 컬럼 이외의 컬럼은 쓸 수 없다.
+        group 함수만 사용 가능하다.
+from emp
+group by {bew_컬럼};
+
+deptno에 의해 그룹화된 deptno를 출력하라
+select deptno from emp group by deptno;
+부서 별 합계를 구하라
+select deptno,sum(sal) from emp group by deptno;
+select job,deptno,sum(sal) from emp group by deptno;
+
+select deptno, max(sal) from emp group by deptno;
+
+Q : 직책별 최고급여
+select job,max(sal) from emp group by job;
+
+Q : 부서 내부의 직책별로 연봉합계 구하기
+select deptno, job, truncate(sum(sal),0) sumsal from emp group by deptno,job order by 3;
+Q : 연봉이 2천 이상인 사람만 걸러내고 싶을 때
+이렇게 하면 안됨
+select deptno, job, truncate(sum(sal),0) as sumsal from emp group by deptno,job where sumsal>=2000 order by 3 desc;
+having을 써야 함
+select deptno, job, truncate(sum(sal),0) as sumsal from emp group by deptno,job having sumsal>=2000 order by 3 desc;
