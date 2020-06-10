@@ -452,3 +452,73 @@ Q : 연봉이 2천 이상인 사람만 걸러내고 싶을 때
 select deptno, job, truncate(sum(sal),0) as sumsal from emp group by deptno,job where sumsal>=2000 order by 3 desc;
 having을 써야 함
 select deptno, job, truncate(sum(sal),0) as sumsal from emp group by deptno,job having sumsal>=2000 order by 3 desc;
+
+#### 2020.06.10
+select
+from
+where
+order by
+limit 
+
+select
+from
+where   그룹함수(X)
+group by 
+having  그룹함수(O)
+order by
+limit 
+
+단일행 함수
+    문자열 = java의 String 클래스와 유사
+    날짜
+
+그룹 함수(복수행 함수)
+    count - ifnull 처리
+    avg / sum
+    min / max
+    group by 부분합
+
+쿼리
+    - 내부쿼리 : subquery
+
+연산자 별로 처리할 수 있는 데이틔 개수가 다름
+1. 배교연산자 = 한 행의 결과 / = >  >= <= <
+2. in-any   =여러명의 결과
+        < any : 서브쿼리 리턴값중 최대값보다 작은
+        > any : 최소값보다 큰
+        < all : 최소값보다 작은
+        > all : 서브쿼리 리턴값 중 최대값보다 큰
+
+**관계형 데이터베이스**
+서로 연관관계가 있는 데이터를 확인하려면 Join을 사용하게 된다. 여러 테이블의 데이터를 사용하는 것! 어려우니 집중하자.
+
+조건이 같은 데이터를 가져오고 싶다면 equi.join을 사용한다.
+
+equi join
+non equi join
+테이블 삭제하려면 drop table [table name]
+
+outer join
+    left outer
+    right outer
+    full outer
+
+DML
+    SELECT
+    INSERT
+    UPDATE
+    DELETE
+DDL 저장장소 설정
+            database, table
+    CREATE  
+        create database [databasename] 데이터베이스 생성
+        create or replace : 생성하거나 바꿔라
+
+        create table [tablename] (
+            [columnname] datatype(size) option,
+            [columnname] datatype(size) option,
+            ...
+        )
+    ALTER
+        
+    DROP
