@@ -505,9 +505,23 @@ outer join
 
 DML
     SELECT
+        한 개의 테이블
+            일반적인 경우
+                함수
+            서브쿼리
+                select 중첩
+                    컬럼(X)
+                    from(inline view)
+                    where
+                단일행 서브쿼리
+                복수행 서브쿼리
+                    in any all
+        여러 개의 테이블 - join
     INSERT
     UPDATE
     DELETE
+
+
 DDL 저장장소 설정
             database, table
     CREATE  
@@ -519,6 +533,64 @@ DDL 저장장소 설정
             [columnname] datatype(size) option,
             ...
         )
+        create table as select
+
     ALTER
-        
+        table
+            컬럼에 대한 변경
     DROP
+        database
+        table
+
+#### 2020.06.11
+- 컬럼의 순서
+insert into 테이블명 values ('String', 값, 값);
+insert into (컬럼명,컬럼명,컬럼명) values('값','값',값);
+
+- null의 허용/불허. not null을 쓰면 불허한다. default는 허용!
+create table dept3 (
+    deptno int(2) not null,
+    dname varchar(13),
+    loc varchar(14)
+);
+
+- 기본값
+    값을 입력하지 않으면 기본값을 설정
+create table dept3(
+    deptno int(1) default 99999,
+    dname varchar(13),
+    loc varchar(14)
+);
+
+insert into dept3 values (default, 'dev','kakao');
+
+- 자동 증가 컬럼값 (테이블 내에서 한 개의 컬럼만 가능함. 그래서 primary key를 써 줘야 함)
+고유번호 같은 것은 +=1이 필요하다. (게시글 번호)
+계산하게 하는 것은 귀찮기 때문에 데이터베이스에서 가져올 때 수를 세게 한다.
+create table testtbl (
+    seq int(2) primary key auto_increment,
+    name varchar(10)
+);
+
+- 수정 : Update 테이블명 set [column name=값, 컬럼명 ="값"] : 전체 행이 바뀜. where을 사용해 조건적으로 바꿀 수도 있음.
+
+- 삭제 : DELETE
+delete from table명 : 전체 데이터 삭제
+delete from table명 where 조건
+
+- 테이블에 DML => 정상적인 데이터 입출력
+    입력 검사 - 제약 조건 (constraint)
+
+1. not null     - 필수입력시키기 
+2. unique       - 중복입력 제거
+3. primary key  - 필수입력 + 중복제거 (auto_increment에 필수)
+4. foreign      - 참조
+5. check        - 입력값 검사 (프로그램한테 위임)
+
+**constraint.sql**
+- 참조제약조건 
+    - 참조키, 외래키
+M 대 M 관계는 1 대 M 두개로 해소한다.
+예를 들어 회원이 도서를 빌릴 때, 한 회원이 여러 개의 책을 빌릴 수가 있다. 도서 테이블에도 여러 회원이 들어온다. 이 관계 해소를 위해 '예약'테이블을 만들어 회원아이디, 도서번호를 (FK)로 하여 관리함으로써 다대다 관계를 해소한다.
+
+모델링 
