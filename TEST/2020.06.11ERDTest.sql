@@ -1,3 +1,4 @@
+-- 점선은 Null이냐 아니냐의 문제!
 create table customers (
     cno varchar(5) PRIMARY KEY,
     cname varchar(10),
@@ -16,7 +17,15 @@ create table orders (
     CONSTRAINT orders_cno_fk FOREIGN KEY (cno) REFERENCES customers (cno)
 );
 
-create table orderdetails (
+create table products (
+    pno varchar(5) PRIMARY KEY,
+    pname varchar(20),
+    cost int(8),
+    stock int(5)
+);
+
+create table orderdetails
+(
     orderno varchar(10),
     pno varchar(5),
     qty int(5),
@@ -24,11 +33,4 @@ create table orderdetails (
     CONSTRAINT orderdetails_orderno_fk FOREIGN KEY (orderno) REFERENCES orders (orderno),
     CONSTRAINT orderdetails_pno_fk FOREIGN KEY (pno) REFERENCES products (pno),
     CONSTRAINT orderdetails_pk PRIMARY KEY(orderno, pno)
-);
-
-create table products (
-    pno varchar(5) PRIMARY KEY,
-    pname varchar(20),
-    cost int(8),
-    stock int(5)
 );
